@@ -11,7 +11,8 @@
   "devDependencies": {
     "chrome-launcher": "^0.10.2",
     "fs-extra": "^6.0.1",
-    "gulp": "^3.9.1",
-    "lighthouse": "^3.0.2"
+    "gulp": "^4.0.2",
+    "lighthouse": "^3.0.2",
+    "lighthouse-batch": "^5.0.1"
   }
 }
