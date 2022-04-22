@@ -1,73 +1,216 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-  <title>Lighthouse Summary Report</title>
-  <style>
-    body {
-      font-family: sans-serif;
-    }
-    table {
-      margin: auto;
-    }
-    tr {
-      border: 1px solid grey;
-    }
-    h1 {
-       text-align: center;
-       margin: 30px auto 50px auto
-    }
-  </style>
-</head>
-<body>
-<table>
-  <h1>Performance Summary Report</h1>
-  <tr>
-    <th>
-      Case No.
-    </th>
-    <th>
-      First Meaningful Paint
-    </th>
-    <th>
-      Link To Details
-    </th>
-  </tr>
-  <tbody id="tableBody">
-  </tbody>
-</table>
-<script>
-let timespent = %%TIME_SPENT%%;
-let timestamp = %%TIMESTAMP%%;
-let tableBody = document.getElementById("tableBody");
-let content = '';
-for(let i=0; i < timespent.length; i++) {
-  content += `<tr style="border: 1px solid grey">
-    <td>
-      ${i+1}
-    </td>
-    <td>
-      ${timespent[i]}
-    </td>
-    <td>
-      <a href="../../cases/lighthouse-report@${timestamp}-${i}.html">View Details</a>
-    </td>
-  </tr>`
-}
-let total = timespent.reduce((i, j) => {
-  return i + j;
-})
-let count = timespent.filter(function(i) { return i}).length
-content += `<tr>
-<td>
-  AVG
-</td>
-<td>
-${total / count}
-</td>
-</tr>`
-tableBody.innerHTML = content;
-</script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1"
+    />
+    <title>Lighthouse Summary Report</title>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      table {
+        margin: auto;
+      }
+      tr {
+        border: 1px solid grey;
+      }
+      td,
+      th {
+        padding: 10px;
+        text-align: center;
+      }
+      h1 {
+        text-align: center;
+        margin: 30px auto 10px auto;
+      }
+      #page{
+        padding-bottom: 40px;
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <table>
+      <h1>Performance Summary Report</h1>
+      <tr>
+        <th colspan="9" id="page"></th>
+      </tr>
+      <tr>
+        <th>
+          Test #
+        </th>
+        <th>
+          Performance score
+        </th>
+        <th>
+          First Contentful Paint
+        </th>
+        <th>
+          First Meaningful Paint
+        </th>
+        <th>
+          Speed index
+        </th>
+        <th>
+          Time to Interactive
+        </th>
+        <th>
+          First CPU Idle
+        </th>
+        <th>
+          Estimated Input Latency
+        </th>
+        <th>
+          Link To Details
+        </th>
+      </tr>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <script>
+      let timespent = %%TIME_SPENT%%;
+      let timestamp = %%TIMESTAMP%%;
+      let page = "%%PAGE%%";
+      let psAr = [];
+      let fcpAr = [];
+      let fmpAr = [];
+      let sidxAr = [];
+      let interAr = [];
+      let fciAr = [];
+      let eilAr = [];
+
+      let tablePage = document.getElementById("page");
+      let tableBody = document.getElementById("tableBody");
+      let content = '';
+
+      tablePage.innerHTML = page;
+
+      for(let i=0; i < timespent.length; i++) {
+
+        let ps = Math.round(((timespent[i][6]) * 100 ));
+        let fcp = ((timespent[i][0] % 60000) / 1000).toFixed(1);
+        let fmp = ((timespent[i][1] % 60000) / 1000).toFixed(1);
+        let sidx = ((timespent[i][2] % 60000) / 1000).toFixed(1);
+        let inter = ((timespent[i][3] % 60000) / 1000).toFixed(1);
+        let fci = ((timespent[i][4] % 60000) / 1000).toFixed(1);
+        let eil = Math.round(((timespent[i][5])));
+
+        psAr.push(timespent[i][6]);
+        fcpAr.push(timespent[i][0]);
+        fmpAr.push(timespent[i][1]);
+        sidxAr.push(timespent[i][2]);
+        interAr.push(timespent[i][3]);
+        fciAr.push(timespent[i][4]);
+        eilAr.push(timespent[i][5]);
+
+        content += `<tr style="border: 1px solid grey">
+          <td>
+            ${i+1}
+          </td>
+          <td>
+            ${ps}
+          </td>
+          <td>
+            ${fcp}
+          </td>
+          <td>
+            ${fmp}
+          </td>
+          <td>
+            ${sidx}
+          </td>
+          <td>
+            ${inter}
+          </td>
+          <td>
+            ${fci}
+          </td>
+          <td>
+            ${eil}
+          </td>
+          <td>
+            <a href="../../cases/lighthouse-report@${timestamp}-${i}.html" target="_blank">View Details</a>
+          </td>
+        </tr>`
+      }
+
+        var totalPs = 0;
+        for (var i = 0; i < psAr.length; i++) {
+          totalPs += psAr[i];
+        }
+        var avgPS = Math.round(((totalPs / psAr.length) *100));
+
+        var totalFcp = 0;
+        for (var i = 0; i < fcpAr.length; i++) {
+          totalFcp += fcpAr[i];
+        }
+        var avgFcp = (((totalFcp / fcpAr.length) % 60000) / 1000).toFixed(1);
+
+        var totalFmp = 0;
+        for (var i = 0; i < fmpAr.length; i++) {
+          totalFmp += fmpAr[i];
+        }
+        var avgFmp = (((totalFmp / fmpAr.length) % 60000) / 1000).toFixed(1);
+
+        var totalSidx = 0;
+        for (var i = 0; i < sidxAr.length; i++) {
+          totalSidx += sidxAr[i];
+        }
+        var avgSidx = (((totalSidx / sidxAr.length) % 60000) / 1000).toFixed(1);
+
+        var totalInter = 0;
+        for (var i = 0; i < interAr.length; i++) {
+          totalInter += interAr[i];
+        }
+        var avgInter = (((totalInter / interAr.length) % 60000) / 1000).toFixed(1);
+
+        var totalFci = 0;
+        for (var i = 0; i < fciAr.length; i++) {
+          totalFci += fciAr[i];
+        }
+        var avgFci = (((totalFci / fciAr.length) % 60000) / 1000).toFixed(1);
+
+        var totalEil = 0;
+        for (var i = 0; i < eilAr.length; i++) {
+          totalEil += eilAr[i];
+        }
+        var avgEil = Math.round(totalEil / eilAr.length);
+
+      content += `<tr>
+      <td>
+        AVG
+      </td>
+      <td>
+      ${avgPS}
+      </td>
+      <td>
+      ${avgFcp}
+      </td>
+      <td>
+      ${avgFmp}
+      </td>
+      <td>
+      ${avgSidx}
+      </td>
+      <td>
+      ${avgInter}
+      </td>
+      <td>
+      ${avgFci}
+      </td>
+      <td>
+      ${avgEil}
+      </td>
+      <td>
+      &nbsp;
+      </td>
+      </tr>`
+      tableBody.innerHTML = content;
+    </script>
+
+  </body>
 </html>
